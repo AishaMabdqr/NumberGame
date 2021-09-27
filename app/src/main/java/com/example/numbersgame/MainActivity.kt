@@ -16,13 +16,11 @@ import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var userText : EditText
     lateinit var clRoot : ConstraintLayout
+    lateinit var userText : EditText
     lateinit var guessBut : Button
-    lateinit var text2 : TextView
     lateinit var itemList : ArrayList<String>
     lateinit var rvMessages : RecyclerView
-    var num = Random.nextInt(11)
 
     private var answer = 0
     private var guesses = 3
@@ -31,55 +29,48 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        answer = Random.nextInt(10)
+
         clRoot = findViewById(R.id.clRoot)
         itemList = ArrayList()
 
         rvMessages = findViewById(R.id.rvMessages)
-
-        rvMessages = findViewById<RecyclerView>(R.id.rvMessages )
         rvMessages.adapter = MessageAdapter(this, itemList)
         rvMessages.layoutManager = LinearLayoutManager(this)
 
-        var text1 = findViewById<TextView>(R.id.tvOne)
-         text2 = findViewById<TextView>(R.id.tvTwo)
         userText = findViewById(R.id.userText)
         guessBut = findViewById(R.id.Guess)
 
-        text1.text = " You Guessed {${userText.toString().toInt()}} "
-        guessBut.setOnClickListener{Guessfunc(num,userText.toString().toInt())}
+        guessBut.setOnClickListener{Guessfunc()}
 
     }
 
-    fun Guessfunc(num1 : Int , num2 : Int ){
+    fun Guessfunc(){
 
         val msg = userText.text.toString()
-
-
         if (msg.isNotEmpty()){
-            if(guesses>0){
-                if(msg.toInt() == answer){
-
+            if(guesses>0) {
+                if (msg.toInt() == answer) {
                     showAlertDialog("You win!\n\nPlay again?")
-                }else{
+                } else {
                     guesses--
                     itemList.add("You guessed $msg")
                     itemList.add("You have $guesses guesses left")
                 }
-                if(guesses==0){
+                if (guesses == 0) {
 
                     itemList.add("You lose - The correct answer was $answer")
                     itemList.add("Game Over")
                     showAlertDialog("You lose...\nThe correct answer was $answer.\n\nPlay again?")
                 }
-
-
-          // itemList.add(msg)
-            //userText.text.clear()
-        }}else {
+            }
+            userText.text.clear()
+            userText.clearFocus()
+            rvMessages.adapter?.notifyDataSetChanged()
+        }else {
                 Snackbar.make(clRoot, "Please enter a number", Snackbar.LENGTH_LONG).show()
         }
     }
-
 
          fun showAlertDialog(title: String) {
             // build alert dialog
